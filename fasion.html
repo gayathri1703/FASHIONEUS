@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FashionNexus – Smart Outfit Recommender</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #fde2f3, #e2f7f5);
+      font-family: 'Poppins', sans-serif;
+    }
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    #imagePreview {
+      max-height: 180px;
+      border-radius: 0.75rem;
+      object-fit: cover;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+
+  <!-- HEADER -->
+  <header class="text-center mb-10">
+    <h1 class="text-4xl font-bold text-pink-600 mb-2">💫 FashionNexus</h1>
+    <p class="text-gray-600 text-lg">Your AI-based personal stylist for every place, weather & mood.</p>
+  </header>
+
+  <!-- MAIN CARD -->
+  <div class="card w-full max-w-xl p-6" id="mainCard">
+    <h2 class="text-2xl font-semibold text-pink-600 mb-4">👗 Upload Your Dress</h2>
+
+    <form id="fashionForm" class="space-y-4">
+      <input type="file" id="dressImage" accept="image/*"
+        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 focus:outline-none" />
+      <img id="imagePreview" alt="Dress Preview" />
+
+      <input type="text" id="location" placeholder="Enter your place (e.g., Chennai, Delhi)"
+        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 focus:outline-none" />
+      <input type="text" id="event" placeholder="Where are you going? (e.g., Party, Temple, College)"
+        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 focus:outline-none" />
+
+      <button type="button" id="submitBtn"
+        class="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-6 rounded-lg shadow-lg w-full">
+        Get Outfit Recommendation
+      </button>
+    </form>
+
+    <div id="loading" class="hidden text-gray-500 mt-4">⏳ Analyzing your style...</div>
+
+    <!-- OUTPUT -->
+    <div id="output" class="mt-6 hidden">
+      <h3 class="text-xl font-semibold text-pink-600 mb-3">✨ Personalized Suggestion</h3>
+      <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+        <p id="suggestionText" class="text-gray-700 leading-relaxed"></p>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="bg-pink-100 p-3 rounded-lg">
+          <h4 class="font-semibold text-pink-700">💡 Color Match</h4>
+          <p id="colorTip" class="text-sm text-gray-700"></p>
+        </div>
+        <div class="bg-blue-100 p-3 rounded-lg">
+          <h4 class="font-semibold text-blue-700">🌦 Weather Tip</h4>
+          <p id="weatherTip" class="text-sm text-gray-700"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-10 text-center text-gray-600 text-sm">
+    © 2025 FashionNexus | Designed with 💖 by your AI Stylist
+  </footer>
+
+  <script>
+    // Image preview
+    document.getElementById('dressImage').addEventListener('change', function (event) {
+      const image = event.target.files[0];
+      if (image) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = URL.createObjectURL(image);
+        preview.style.display = 'block';
+      }
+    });
+
+    // Button click logic
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const img = document.getElementById('dressImage').files[0];
+      const location = document.getElementById('location').value.trim();
+      const eventType = document.getElementById('event').value.trim();
+
+      if (!img || !location || !eventType) {
+        alert("Please upload a dress image and fill all fields!");
+        return;
+      }
+
+      // Show loading
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('output').classList.add('hidden');
+
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('output').classList.remove('hidden');
+
+        // Fake AI logic for demo
+        const pantSuggestions = [
+          "white palazzo pants", "beige trousers", "cream leggings",
+          "light blue jeans", "denim skirt", "linen shorts"
+        ];
+        const colorTips = [
+          "Pair warm tones with neutrals for balance.",
+          "Pastel shades work great with soft white or beige.",
+          "Earthy colors like brown and olive go well with bright tops.",
+          "Cool shades like mint, blue, and lavender complement this dress."
+        ];
+        const weatherTips = [
+          "It's sunny! Choose breathable cotton fabric.",
+          "Looks rainy — keep a light jacket or umbrella handy.",
+          "Cool weather ahead — layer with a cardigan.",
+          "Humid day — prefer light linen or chiffon."
+        ];
+
+        const randomPant = pantSuggestions[Math.floor(Math.random() * pantSuggestions.length)];
+        const randomColorTip = colorTips[Math.floor(Math.random() * colorTips.length)];
+        const randomWeatherTip = weatherTips[Math.floor(Math.random() * weatherTips.length)];
+
+        document.getElementById('suggestionText').innerText =
+          `For your ${eventType.toLowerCase()} at ${location}, try pairing this outfit with ${randomPant}. Add subtle accessories for a complete look.`;
+        document.getElementById('colorTip').innerText = randomColorTip;
+        document.getElementById('weatherTip').innerText = randomWeatherTip;
+      }, 1500);
+    });
+
+    // Smooth animation
+    ScrollReveal().reveal('#mainCard', { delay: 100, duration: 800, origin: 'bottom', distance: '40px' });
+  </script>
+</body>
+</html>
